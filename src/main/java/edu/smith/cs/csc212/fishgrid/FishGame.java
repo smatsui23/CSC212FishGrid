@@ -120,8 +120,10 @@ public class FishGame {
 				Fish justFound = (Fish) wo;
 				
 				// Remove from world.
-				// TODO(lab): add to found instead! (So we see objectsFollow work!)
 				justFound.remove();
+				// TODO(lab): add to found instead! (So we see objectsFollow work!)
+				
+				// Remove from missing list.
 				missing.remove(justFound);
 				
 				// Increase score when you find a fish!
