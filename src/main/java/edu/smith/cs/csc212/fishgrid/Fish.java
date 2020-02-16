@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Most Fish behavior lives up in WorldObject (a Fish just looks special!).
@@ -106,10 +108,15 @@ public class Fish extends WorldObject {
 		flipped.fill(tail);
 		
 		flipped.dispose();
+		
 	}
 	
 	@Override
 	public void step() {
 		// Fish are controlled at a higher level; see FishGame.
 	}
+
+	
+	
+
 }

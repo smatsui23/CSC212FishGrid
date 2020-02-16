@@ -204,8 +204,17 @@ public class World {
 		List<WorldObject> inSpot = this.find(x, y);
 		
 		for (WorldObject it : inSpot) {
-			// TODO(FishGrid): Don't let us move over rocks as a Fish.
+			// Don't let us move over rocks as a Fish.
+			if (it instanceof Rock) {
+				return false;
+			}
 			// The other fish shouldn't step "on" the player, the player should step on the other fish.
+			if (it instanceof Fish) {
+				if (isPlayer = false) {
+					return false;
+				}
+			}
+			
 			if (it instanceof Snail) {
 				// This if-statement doesn't let anyone step on the Snail.
 				// The Snail(s) are not gonna take it.
@@ -235,14 +244,23 @@ public class World {
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
 		// TODO(FishGrid) Comment this method!
 		// Q1. What is recentPositions?
+		// A1. This is a list of positions of the user's fish. 
+		//	  The new position is added to the front of the list every time the player moves its position.
+		
 		// Q2. What is followers?
+		// A2. It stores the name and position(x,y) of object(s) that follows the leader fish.
+		
 		// Q3. What is target?
+		// A3. Target stores the name and position of the player's fish. 
+		
 		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]?
+		// A4. To avoid the overlap of leading fish and followers. 
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i < followers.size() && i+1 < putWhere.size(); i++) {
 			// Q5. What is the deal with the two conditions in this for-loop?
+			// A5. We must limit the number of loops by the number of fish 
+			// following and the number of fish available in the column.(??? TODO)
 			// Conditions are in the "while" part of this loop.
-			
 			IntPoint past = putWhere.get(i+1);
 			followers.get(i).setPosition(past.x, past.y);
 		}

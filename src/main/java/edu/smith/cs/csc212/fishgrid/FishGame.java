@@ -1,5 +1,6 @@
 package edu.smith.cs.csc212.fishgrid;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,6 +24,7 @@ public class FishGame {
 	 * The home location.
 	 */
 	FishHome home;
+	List<Fish> goHome;
 	/**
 	 * These are the missing fish!
 	 */
@@ -57,6 +59,7 @@ public class FishGame {
 		
 		missing = new ArrayList<Fish>();
 		found = new ArrayList<Fish>();
+		goHome = new ArrayList<Fish>();
 		
 		// Add a home!
 		home = world.insertFishHome();
@@ -98,7 +101,9 @@ public class FishGame {
 	 */
 	public boolean gameOver() {
 		// TODO(FishGrid) We want to bring the fish home before we win!
-		return missing.isEmpty();
+		return goHome.size() == 5;   ///change "5" in to variable 
+		
+		
 	}
 
 	/**
@@ -130,6 +135,11 @@ public class FishGame {
 				
 				// Increase score when you find a fish!
 				score += 10;
+				//TO DO: DOES NOT WORK...WHY
+				if (Color.green.equals(Fish.COLORS)) {
+					score += 10;
+				}
+				 
 			}
 		}
 		
@@ -137,6 +147,15 @@ public class FishGame {
 		wanderMissingFish();
 		// When fish get added to "found" they will follow the player around.
 		World.objectsFollow(player, found);
+		
+		//When the player returns home, fish in found list should move to goHome list
+		if (player.getX() == home.getX() && player.getY() == home.getY()) {
+			goHome.addAll(found);
+			//world.remove(found); ///How does this work??
+			found.removeAll(found); //do we need this?? 
+			
+		}
+		
 		// Step any world-objects that run themselves.
 		world.stepAll();
 	}
@@ -150,9 +169,15 @@ public class FishGame {
 			// 30% of the time, lost fish move randomly.
 			if (rand.nextDouble() < 0.3) {
 				lost.moveRandomly();
+			
+				
 			}
 		}
 	}
+	
+	
+
+	
 
 	/**
 	 * This gets a click on the grid. We want it to destroy rocks that ruin the game.
@@ -164,7 +189,8 @@ public class FishGame {
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
 		// TODO(FishGrid) allow the user to click and remove rocks.
-
+		//Rock.remove(atPoint); //NOT WORKING 
+		
 	}
 	
 }
