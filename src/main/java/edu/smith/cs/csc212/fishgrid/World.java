@@ -147,6 +147,8 @@ public class World {
 		item.checkFindMyself();
 	}
 	
+	
+	
 	/**
 	 * Insert a new Rock into the world at random.
 	 * @return the Rock.
@@ -182,6 +184,16 @@ public class World {
 		Snail snail = new Snail(this);
 		insertRandomly(snail);
 		return snail;
+	}
+	
+	/**
+	 * Insert a new Heart into the world at random.
+	 * @return the Heart.
+	 */
+	public Heart insertHeartRandomly() {
+		Heart heart = new Heart(this);
+		insertRandomly(heart);
+		return heart;
 	}
 	
 	/**

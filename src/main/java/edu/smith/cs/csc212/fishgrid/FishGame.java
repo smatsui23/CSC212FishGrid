@@ -36,6 +36,11 @@ public class FishGame {
 	List<Fish> found;
 	
 	/**
+	 * These are hearts we've found!
+	 */
+	List<Heart> hearts;    //list of hearts for the score system??
+	
+	/**
 	 * Number of steps!
 	 */
 	int stepsTaken;
@@ -53,6 +58,7 @@ public class FishGame {
 	
 	public static final int NUM_ROCKS = 10; 
 	
+	public static final int NUM_HEARTS = 5;
 	
 	public FishGame(int w, int h) {
 		world = new World(w, h);
@@ -60,6 +66,7 @@ public class FishGame {
 		missing = new ArrayList<Fish>();
 		found = new ArrayList<Fish>();
 		goHome = new ArrayList<Fish>();
+		hearts = new ArrayList<Heart>();
 		
 		// Add a home!
 		home = world.insertFishHome();
@@ -69,8 +76,14 @@ public class FishGame {
 			world.insertRockRandomly();
 		}
 		
-
 		world.insertSnailRandomly();
+		
+		
+		for (int i=0; i<NUM_HEARTS; i++) {
+			Heart point = world.insertHeartRandomly();
+			hearts.add(point);
+		}
+		
 		
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
@@ -83,8 +96,8 @@ public class FishGame {
 		for (int ft = 1; ft < Fish.COLORS.length; ft++) {
 			Fish friend = world.insertFishRandomly(ft);
 			missing.add(friend);
-		}		
-	}
+		}	
+	}	
 	
 	
 	/**
@@ -102,8 +115,7 @@ public class FishGame {
 	public boolean gameOver() {
 		// TODO(FishGrid) We want to bring the fish home before we win!
 		return goHome.size() == 5;   ///change "5" in to variable 
-		
-		
+	
 	}
 
 	/**
@@ -112,6 +124,21 @@ public class FishGame {
 	public void step() {
 		// Keep track of how long the game has run.
 		this.stepsTaken += 1;
+		
+		//After 20 steps, a fish in the front of the found list can 
+		//move into missing list again
+		Random rand = ThreadLocalRandom.current();
+		if (rand.nextDouble() < 0.3) {
+			if (found.size() > 2) {
+				if (this.stepsTaken > 20) {
+					found.remove(0);
+					//how to add the removed index to missing list ??
+				}
+			}	
+		}
+		
+		
+		
 				
 		// These are all the objects in the world in the same cell as the player.
 		List<WorldObject> overlap = this.player.findSameCell();
@@ -141,6 +168,14 @@ public class FishGame {
 				}
 				 
 			}
+			
+			if (hearts.contains(wo)) {
+				Heart justFound = (Heart) wo;
+				score +=5;
+				hearts.remove(justFound);
+				world.remove(wo);
+			}
+			
 		}
 		
 		// Make sure missing fish *do* something.
@@ -151,10 +186,10 @@ public class FishGame {
 		//When the player returns home, fish in found list should move to goHome list
 		if (player.getX() == home.getX() && player.getY() == home.getY()) {
 			goHome.addAll(found);
-			//world.remove(found); ///How does this work??
 			found.removeAll(found); //do we need this?? 
-			
 		}
+		
+		//world.remove(fish); ///How does this work??
 		
 		// Step any world-objects that run themselves.
 		world.stepAll();
@@ -169,8 +204,20 @@ public class FishGame {
 			// 30% of the time, lost fish move randomly.
 			if (rand.nextDouble() < 0.3) {
 				lost.moveRandomly();
+//				if (rand.nextDouble() < 0.8) {
+//					lost.fastScared();
+//					//Q: need to create a new method to call?
+//				}
+//				if (rand.nextDouble() < 0.3) {
+//					lost.noMove();
+//					//Q: need to create a new method to call? 
+//				}
+			}
 			
-				
+			if(lost.getX() == home.getX() && lost.getY() == home.getY()) {
+				goHome.addAll(found);
+				found.removeAll(found); //do we need this?? 
+				world.remove(lost); //is this working? 
 			}
 		}
 	}
@@ -189,7 +236,7 @@ public class FishGame {
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
 		// TODO(FishGrid) allow the user to click and remove rocks.
-		//Rock.remove(atPoint); //NOT WORKING 
+//		   Rock.remove(atPoint); // How to use remove() method ??? 
 		
 	}
 	
