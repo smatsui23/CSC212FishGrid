@@ -72,9 +72,6 @@ public class FishGame {
 		// Add a home!
 		home = world.insertFishHome();
 		
-		
-		
-		
 		for (int i=0; i<NUM_ROCKS; i++) {
 			world.insertRockRandomly();
 		}
@@ -165,13 +162,10 @@ public class FishGame {
 				score += 10;
 				
 				
-				//TO DO: DOES NOT WORK...WHY??
+				//Green fish gets a special point 
 				if (Color.green.equals(((Fish)wo).getColor())) {
 					score += 10;
 				}
-				
-				
-				 
 			}
 			
 			if (hearts.contains(wo)) {
@@ -180,10 +174,6 @@ public class FishGame {
 				hearts.remove(justFound);
 				world.remove(wo);
 			}
-			
-			
-			
-			
 		}
 		
 		// Make sure missing fish *do* something.
@@ -194,22 +184,23 @@ public class FishGame {
 		//When the player returns home, fish in found list should move to goHome list
 		if (player.getX() == home.getX() && player.getY() == home.getY()) {
 			goHome.addAll(found);
-			 
+	 
 			for (Fish fish: found) {
 				world.remove(fish);
-	
 			}
+			
 			found.removeAll(found);
-			//make a for-loop and remove each found fish from the found list 
-			//still not working?
 		}
 		
 		
 		//Fish that wander home by accident should be marked accordingly as home!
-		//if (fish.getX() == home.getX() && fish.getY() == home.getY() ) {
-		//	goHome.addAll(found);
-		//	found.removeAll(found); 
-		//}
+		for (Fish fish: missing) {
+			if (fish.getX() == home.getX() && fish.getY() == home.getY() ) {
+				goHome.addAll(found);
+				world.remove(fish);
+				found.removeAll(found); 
+			}
+		}
 		
 		
 		
@@ -223,6 +214,11 @@ public class FishGame {
 	private void wanderMissingFish() {
 		Random rand = ThreadLocalRandom.current();
 		for (Fish lost : missing) {
+			//TODO: The lost fish will collect any hearts they bump into (and the player gets no points).
+			//if (lost.inSameSpot(heart)){
+			//	world.remove(heart);
+			//}
+			
 			// 30% of the time, lost fish move randomly.
 			if (rand.nextDouble() < 0.3) {
 				lost.moveRandomly();
@@ -237,32 +233,23 @@ public class FishGame {
 			if(lost.getX() == home.getX() && lost.getY() == home.getY()) {
 				goHome.addAll(found);
 				found.removeAll(found); 
-				//world.remove(Fish); ///How does this work??
 			}
 		}
 	}
 	
-	
-
-	
-
 	/**
 	 * This gets a click on the grid. We want it to destroy rocks that ruin the game.
 	 * @param x - the x-tile.
 	 * @param y - the y-tile.
 	 */
 	public void click(int x, int y) {
-		// TODO(FishGrid) use this print to debug your World.canSwim changes!
-		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
-		// TODO(FishGrid) allow the user to click and remove rocks.
 		for (WorldObject ro: atPoint) {
 			if (ro instanceof Rock) {
 				world.remove(ro);
 			}
 		}
-		//check every object atPoint parameter 
-		// if it is a rock.. remove 
+		
 		
 		
 	}
