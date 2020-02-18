@@ -174,6 +174,50 @@ public abstract class WorldObject {
 		}
 		return false;
 	}
+	
+	public void noMove() {
+		boolean canMove = 
+				world.canSwim(this, x, y) ||
+				world.canSwim(this, x, y) ||
+				world.canSwim(this, x, y) ||
+				world.canSwim(this, x, y);
+		
+		if (!canMove) {
+			return;
+		}
+	}
+	
+	public void fastScared() {
+		boolean canMove = 
+				world.canSwim(this, x+6, y) ||
+				world.canSwim(this, x-6, y) ||
+				world.canSwim(this, x, y+6) ||
+				world.canSwim(this, x, y-6);
+		
+		if (!canMove) {
+			return;
+		}
+		
+		while (true) {
+			int direction = ThreadLocalRandom.current().nextInt(4);
+			
+			boolean success = false;
+			if (direction == 0) {
+				success = moveUp();
+			} else if (direction == 1) {
+				success = moveDown();
+			} else if (direction == 2) {
+				success = moveRight();
+			} else {
+				success = moveLeft();
+			}
+			
+			if (success) {
+				// If so, exit this method now.
+				break;
+			}
+		}
+	}
 
 	/**
 	 * Move randomly! 

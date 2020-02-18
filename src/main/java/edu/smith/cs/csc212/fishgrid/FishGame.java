@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  */
 public class FishGame {
+	
 	/**
 	 * This is the world in which the fish are missing. (It's mostly a List!).
 	 */
@@ -72,6 +73,8 @@ public class FishGame {
 		home = world.insertFishHome();
 		
 		
+		
+		
 		for (int i=0; i<NUM_ROCKS; i++) {
 			world.insertRockRandomly();
 		}
@@ -113,9 +116,7 @@ public class FishGame {
 	 * @return true if the player has won (or maybe lost?).
 	 */
 	public boolean gameOver() {
-		// TODO(FishGrid) We want to bring the fish home before we win!
-		return goHome.size() == 5;   ///change "5" in to variable 
-	
+		return (missing.size() == 0 && found.size() == 0) ;
 	}
 
 	/**
@@ -162,10 +163,14 @@ public class FishGame {
 				
 				// Increase score when you find a fish!
 				score += 10;
-				//TO DO: DOES NOT WORK...WHY
-				if (Color.green.equals(Fish.COLORS)) {
+				
+				
+				//TO DO: DOES NOT WORK...WHY??
+				if (Color.green.equals(((Fish)wo).getColor())) {
 					score += 10;
 				}
+				
+				
 				 
 			}
 			
@@ -175,6 +180,9 @@ public class FishGame {
 				hearts.remove(justFound);
 				world.remove(wo);
 			}
+			
+			
+			
 			
 		}
 		
@@ -186,10 +194,24 @@ public class FishGame {
 		//When the player returns home, fish in found list should move to goHome list
 		if (player.getX() == home.getX() && player.getY() == home.getY()) {
 			goHome.addAll(found);
-			found.removeAll(found); //do we need this?? 
+			 
+			for (Fish fish: found) {
+				world.remove(fish);
+	
+			}
+			found.removeAll(found);
+			//make a for-loop and remove each found fish from the found list 
+			//still not working?
 		}
 		
-		//world.remove(fish); ///How does this work??
+		
+		//Fish that wander home by accident should be marked accordingly as home!
+		//if (fish.getX() == home.getX() && fish.getY() == home.getY() ) {
+		//	goHome.addAll(found);
+		//	found.removeAll(found); 
+		//}
+		
+		
 		
 		// Step any world-objects that run themselves.
 		world.stepAll();
@@ -204,20 +226,18 @@ public class FishGame {
 			// 30% of the time, lost fish move randomly.
 			if (rand.nextDouble() < 0.3) {
 				lost.moveRandomly();
-//				if (rand.nextDouble() < 0.8) {
-//					lost.fastScared();
-//					//Q: need to create a new method to call?
-//				}
-//				if (rand.nextDouble() < 0.3) {
-//					lost.noMove();
-//					//Q: need to create a new method to call? 
-//				}
+				if (rand.nextDouble() < 0.8) {
+					lost.fastScared();
+				}
+				if (rand.nextDouble() < 0.3) {
+					lost.noMove();
+				}
 			}
 			
 			if(lost.getX() == home.getX() && lost.getY() == home.getY()) {
 				goHome.addAll(found);
-				found.removeAll(found); //do we need this?? 
-				world.remove(lost); //is this working? 
+				found.removeAll(found); 
+				//world.remove(Fish); ///How does this work??
 			}
 		}
 	}
@@ -236,7 +256,14 @@ public class FishGame {
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
 		// TODO(FishGrid) allow the user to click and remove rocks.
-//		   Rock.remove(atPoint); // How to use remove() method ??? 
+		for (WorldObject ro: atPoint) {
+			if (ro instanceof Rock) {
+				world.remove(ro);
+			}
+		}
+		//check every object atPoint parameter 
+		// if it is a rock.. remove 
+		
 		
 	}
 	
